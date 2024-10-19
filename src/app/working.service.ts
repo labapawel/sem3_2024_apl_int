@@ -9,12 +9,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class WorkingService {
 
 
-  public taskStatus: Status[] = [
+  public static taskStatus: Status[] = [
     {id: 0, name: "Do wykonania"},
     {id: 250, name: "W trakcie"},
     {id: 500, name: "Wykonane"},
   ]
-  public workStatus: Status[] = [
+  public static workStatus: Status[] = [
     {id: 250, name: "W trakcie"},
     {id: 500, name: "Wykonane"},
   ]
@@ -31,8 +31,27 @@ export class WorkingService {
 
   public add(task:Task){
     this.tasks.push(task);
+    this.save();
     this.refresh();
   }
 
-  constructor() { }
+  save() : void {
+    localStorage.setItem('sem3_apl_int', JSON.stringify(this.tasks));
+  }
+
+  load() : void {
+    let dane = localStorage.getItem('sem3_apl_int');
+    if(!dane)
+        dane = '[]';
+    this.tasks = JSON.parse(dane) as Task[];  
+    this.tasks.forEach(e=>{
+      e.taskStart = new Date(e.taskStart);
+      e.taskEnd = new Date(e.taskEnd);
+    })
+    console.log(this.tasks);
+  }
+
+  constructor() {
+      this.load();
+   }
 }

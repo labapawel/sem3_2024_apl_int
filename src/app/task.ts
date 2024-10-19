@@ -6,6 +6,6 @@ export interface Task {
     taskStart: Date,
     taskEnd: Date,
     active: boolean,
-    status: Status,
+    status: number,
     work: Work[],
 }

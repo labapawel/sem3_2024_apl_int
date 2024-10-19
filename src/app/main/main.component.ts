@@ -12,7 +12,7 @@ import { Task } from '../task'
 export class MainComponent {
 
   clicks(){
-    this.working.add({name:'',taskStart:new Date(), taskEnd:new Date(),active:true, status:{id:0,name:''}, work:[]});
+    this.working.add({name:'',taskStart:new Date(), taskEnd:new Date(),active:true, status:0, work:[]});
   }
   constructor(public working : WorkingService){
     working.sub().subscribe( tasks => {
