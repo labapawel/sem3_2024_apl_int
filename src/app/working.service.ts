@@ -29,6 +29,20 @@ export class WorkingService {
     this.rxdata.next(this.tasks);
   }
 
+  public remTask(id:number){
+    this.tasks = this.tasks.filter(e=>e.id != id);
+    this.save();
+    this.refresh();
+  }
+
+  public getTask(id: number) : Task {
+    let numTaska = this.tasks.findIndex(e=>e.id == id);
+    // console
+    if(numTaska>=0)
+        return this.tasks[numTaska];
+    return {id:-1, name: "", active: true, status:0, taskEnd: new Date(), taskStart: new Date(), work: []};
+  }
+
   public addOrUpdate(task:Task){
     if(task.id<0){
         this.tasks.push(task);
@@ -63,6 +77,8 @@ export class WorkingService {
 
     if(this.tasks.length)
         WorkingService.lastID = Math.max(...this.tasks.map(e=>e.id))
+    // console.log(WorkingService.lastID);
+      
     this.refresh();
   }
 
