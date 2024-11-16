@@ -14,13 +14,17 @@ import { TaskitemComponent } from '../taskitem/taskitem.component';
 })
 export class TasksComponent {
   public tasks : Task[] = [];
-  public removeItem: Task = {id:-1, name: "", active: true, status:0, taskEnd: new Date(), taskStart: new Date(), work: []};
+  public removeItem: Task = WorkingService.taskEmpty();
 
-  public remove(id: number) : void {
+
+  public removeSel(id: number) : void {
     this.removeItem = this.serwis.getTask(id);
-    console.log(id);
   }
 
+  public remove() : void{
+    this.serwis.remTask(this.removeItem.id);
+    this.removeItem = WorkingService.taskEmpty();
+  }
   constructor (private serwis : WorkingService, private router: Router){
     serwis.sub().subscribe(task  => {
       console.log("działam", task)

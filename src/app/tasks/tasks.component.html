@@ -12,11 +12,11 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                      <button type="button" class="btn btn-danger"   data-bs-dismiss="modal">Usuń</button>
+                      <button type="button" class="btn btn-danger"  (click)="remove()"  data-bs-dismiss="modal">Usuń</button>
                     </div>
                   </div>
                 </div>
               </div>
             
-        <app-taskitem *ngFor="let item of tasks" [dane]="item" (delete)="remove($event)"></app-taskitem>
+        <app-taskitem *ngFor="let item of tasks" [dane]="item" (delete)="removeSel($event)"></app-taskitem>
 </div>

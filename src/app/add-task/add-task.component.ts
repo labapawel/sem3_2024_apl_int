@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Task } from '../task';
 import { NgFor } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import moment from 'moment';
+import 'moment-business-days';
 
 @Component({
   selector: 'app-add-task',
@@ -32,16 +34,27 @@ export class AddTaskComponent {
       return `${year}-${month}-${day}`;
     }
 
+    public getHours(){
+      let start = moment(this.dane.taskStart);
+      let koniec = moment(this.dane.taskEnd);
+      koniec.add(1, 'day');
+      return koniec.businessDiff(start)*8;
+    }
+
     save(){
       this.serv.addOrUpdate(this.dane);
       this.router.navigate(['/tasks']);
     }
 
     setTaskStart(th: any) : void {
-        this.dane.taskStart = new Date(th.target.value);
+      let taskS = new Date(th.target.value);
+      if(taskS <= this.dane.taskEnd)
+          this.dane.taskStart = taskS;
     } 
     setTaskEnd(th: any) : void {
-        this.dane.taskEnd = new Date(th.target.value);
+       let taskE = new Date(th.target.value);
+       if(taskE>=this.dane.taskStart)
+         this.dane.taskEnd = taskE;
     } 
 
 }

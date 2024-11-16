@@ -8,6 +8,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class WorkingService {
   static lastID: number = 0; 
+  static taskEmpty() : Task {
+    return {id:-1, name: "", active: true, status:0, taskEnd: new Date(), taskStart: new Date(), work: []};
+  } 
 
   public static taskStatus: Status[] = [
     {id: 0, name: "Do wykonania"},

@@ -29,6 +29,9 @@
         </div>
       </div>
 
+      <div class="mt-3">
+        <p>Czas realizacji: <span>{{getHours()}}</span> godzin(y)</p>
+      </div>
       <div class="form-check form-switch mt-3">
         <input class="form-check-input" type="checkbox" role="switch" id="taskactive" [(ngModel)]="dane.active">
         <label class="form-check-label"  for="taskactive">Aktywność</label>
