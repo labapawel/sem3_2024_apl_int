@@ -27,7 +27,8 @@ export class TasksComponent {
   }
   constructor (private serwis : WorkingService, private router: Router){
     serwis.sub().subscribe(task  => {
-      console.log("działam", task)
+      // console.log("działam", task)
+      console.log(serwis.taskStatusStart());
       this.tasks = task;
     })
   }

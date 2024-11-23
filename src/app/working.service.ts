@@ -2,27 +2,46 @@ import { Injectable } from '@angular/core';
 import { Status } from './status';
 import { Task } from './task';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Work } from './work';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkingService {
+  public static workStatusNew:number = 0;
+  public static workStatusStart:number = 250;
+  public static workStatusStop:number = 500;
   static lastID: number = 0; 
+
+  static workSelStatus(id:number):Status {return WorkingService.workStatus.filter(e=>e.id==id)[0]}
+
   static taskEmpty() : Task {
     return {id:-1, name: "", active: true, status:0, taskEnd: new Date(), taskStart: new Date(), work: []};
   } 
 
+  static workEmpty() : Work {
+    return {start: new Date(), stop: new Date(), status: WorkingService.workSelStatus(this.workStatusStart) }
+  }
+
+
+
   public static taskStatus: Status[] = [
-    {id: 0, name: "Do wykonania"},
-    {id: 250, name: "W trakcie"},
-    {id: 500, name: "Wykonane"},
+    {id: WorkingService.workStatusNew, name: "Do wykonania"},
+    {id: WorkingService.workStatusStart, name: "W trakcie"},
+    {id: WorkingService.workStatusStop, name: "Wykonane"},
   ]
   public static workStatus: Status[] = [
-    {id: 250, name: "W trakcie"},
-    {id: 500, name: "Wykonane"},
+    {id: WorkingService.workStatusStart, name: "W trakcie"},
+    {id: WorkingService.workStatusStop, name: "Wykonane"},
   ]
   private tasks: Task[] = []; 
   private rxdata : BehaviorSubject<Task[]> = new BehaviorSubject<Task[]>(this.tasks);
+  
+  public taskStatusStart() : Task | null {
+      let workTask = this.tasks.filter(e=>e.status==WorkingService.workStatusStart)[0]
+      return workTask;
+  }
+
 
   public sub(): Observable<Task[]>{
     return this.rxdata.asObservable()
@@ -38,6 +57,27 @@ export class WorkingService {
     this.refresh();
   }
 
+  public statusChange(task: Task){
+  
+    let work: Work | undefined =  task.work.at(-1);
+    if(work != undefined && work.status.id == WorkingService.workStatusStart){
+      work.status = WorkingService.workSelStatus(WorkingService.workStatusStop);
+      work.stop = new Date();
+      task.status = WorkingService.workStatusStop;
+    } else {
+      let activeTask = this.taskStatusStart();
+      if(activeTask)
+          this.statusChange(activeTask);
+
+      work = WorkingService.workEmpty();
+      task.status = WorkingService.workStatusStart;
+      task.work.push(work);
+    }
+    
+    this.addOrUpdate(task);
+  }
+
+
   public getTask(id: number) : Task {
     let numTaska = this.tasks.findIndex(e=>e.id == id);
     // console
@@ -47,12 +87,14 @@ export class WorkingService {
   }
 
   public addOrUpdate(task:Task){
+    // console.log(task);
+    
     if(task.id<0){
         this.tasks.push(task);
         task.id = ++WorkingService.lastID;
     } else 
     {
-        let ind = this.tasks.findIndex(e=>e.id = task.id);
+        let ind = this.tasks.findIndex(e=>e.id == task.id);
         if(ind>=0)
             { 
               this.tasks[ind] = task;              
@@ -60,6 +102,7 @@ export class WorkingService {
     }
     this.save();
     this.refresh();
+    // console.log(task);
   }
 
   save() : void {
